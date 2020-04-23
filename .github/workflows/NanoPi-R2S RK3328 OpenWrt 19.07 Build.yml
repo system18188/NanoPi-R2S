@@ -3,16 +3,13 @@ name: NanoPi-R2S RK3328 OpenWrt 19.07 Build
 on:
   push:
     paths:
-      - 'CHANGELOG.md'
+      - "CHANGELOG.md"
 
 jobs:
-
   build:
-
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@master
         with:
@@ -32,7 +29,7 @@ jobs:
 
       #- name: Setup Debug Session
       #  uses: P3TERX/debugger-action@master
-  
+
       - name: Install Repo
         run: |
           git clone https://github.com/friendlyarm/repo
@@ -71,11 +68,11 @@ jobs:
           git clone https://github.com/vernesong/OpenClash
           mv OpenClash/luci-app-openclash/ .
           rm -rf OpenClash/
-          
+
           git clone https://github.com/songchenwen/nanopi-r2s
           mv nanopi-r2s/luci-app-r2sflasher/ .
           rm -rf nanopi-r2s/
-          
+
       - name: Install Clash Binaries
         run: |
           cd friendlywrt-rk3328/friendlywrt/package/base-files/files
@@ -93,8 +90,8 @@ jobs:
           cd friendlywrt-rk3328/friendlywrt/include
           sed -i 's/dnsmasq /dnsmasq-full default-settings luci /' target.mk
 
-      - name: Update Feeds		
-        run: |		
+      - name: Update Feeds
+        run: |
           cd friendlywrt-rk3328/friendlywrt		
           ./scripts/feeds update -a		
           ./scripts/feeds install -a
@@ -126,7 +123,7 @@ jobs:
         run: |
           cd friendlywrt-rk3328/friendlywrt
           sed -i '/uci commit luci/i\uci set luci.main.mediaurlbase=/luci-static/argon' package/lean/default-settings/files/zzz-default-settings
-           
+
       - name: Install UPX
         run: |
           ln -s /usr/bin/upx-ucl friendlywrt-rk3328/friendlywrt/staging_dir/host/bin/upx
@@ -157,7 +154,7 @@ jobs:
 
           find friendlywrt-rk3328/out/ -name "FriendlyWrt_*img*" | xargs -I{} sh -c 'f=$(basename $1); zip -r -j "./artifact/${f}.zip" $1' sh {} \;
           #find friendlywrt-rk3328/friendlywrt/bin/targets/rockchip-rk3328/generic -name "openwrt*-squashfs.img" | xargs -I{} sh -c 'f=$(basename $1); zip -r -j "./artifact/${f}.zip" $1' sh {} \;
-          
+
           cp friendlywrt-rk3328/friendlywrt/.config ./artifact/
 
       - name: Upload Artifact
